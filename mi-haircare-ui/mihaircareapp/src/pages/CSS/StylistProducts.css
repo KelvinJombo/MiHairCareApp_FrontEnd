@@ -1,0 +1,29 @@
+.home-category-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 240px;
+  height: 150px;
+  background-color: #ffffff;
+  color: #1a1a1a;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.2rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  border: 1px solid #e0e0e0;
+}
+
+.home-category-card:hover {
+  background-color: #dfefff;
+  transform: translateY(-6px);
+}
+
+@media (max-width: 768px) {
+  .home-category-card {
+    width: 90%;
+    height: 120px;
+    font-size: 1.1rem;
+  }
+}

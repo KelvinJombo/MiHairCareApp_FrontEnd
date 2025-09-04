@@ -1,0 +1,47 @@
+.dreadlocs-page {
+    font-family: "Poppins", sans-serif;
+    padding: 1rem;
+    background-color: #fafafa;
+  }
+  
+  .banner {
+    background: linear-gradient(135deg, #ffe3ec, #fcd6e5);
+    padding: 2rem 1rem;
+    text-align: center;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    margin-bottom: 2rem;
+  }
+  
+  .banner h1 {
+    font-size: 2rem;
+    color: #222;
+    margin-bottom: 0.5rem;
+  }
+  
+  .banner p {
+    font-size: 1rem;
+    color: #666;
+  }
+  
+  .banner-images {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+    gap: 1rem;
+  }
+  
+  .banner-images img {
+    max-width: 200px;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dreadlocs-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem;
+  }
+  

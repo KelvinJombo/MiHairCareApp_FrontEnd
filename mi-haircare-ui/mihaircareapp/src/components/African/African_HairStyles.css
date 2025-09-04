@@ -1,0 +1,100 @@
+.african-page {
+    padding: 2rem;
+    background-color: #f9fafc;
+    font-family: "Poppins", sans-serif;
+  }
+  
+  /* Banner */
+  .banner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    background-color: #fff3e0; /* warm tone to match African theme */
+    padding: 2rem;
+    border-radius: 20px;
+    margin-bottom: 3rem;
+    align-items: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+  
+  .banner-content {
+    flex: 1 1 300px;
+    padding: 1rem;
+  }
+  
+  .banner-content h1 {
+    font-size: 2rem;
+    color: #bf360c; /* earthy orange tone */
+    margin-bottom: 0.5rem;
+  }
+  
+  .banner-content p {
+    font-size: 1.1rem;
+    color: #333;
+  }
+  
+  .banner-image {
+    flex: 1 1 300px;
+    text-align: center;
+  }
+  
+  .banner-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 16px;
+  }
+  
+  /* Section */
+  .section {
+    margin-top: 2rem;
+  }
+  
+  .section h2 {
+    font-size: 1.6rem;
+    margin-bottom: 1.5rem;
+    color: #2a2a2a;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 0.5rem;
+    text-align: center;
+  }
+  
+  /* Category Grid */
+  .category-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 2rem;
+    justify-items: center;
+  }
+  
+  .category-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    background: linear-gradient(135deg, #ffe0b2, #ffcc80);
+    border-radius: 16px;
+    text-decoration: none;
+    text-align: center;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: #1a1a1a;
+  }
+  
+  .category-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .category-card h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #bf360c;
+  }
+  
+  .category-card p {
+    font-size: 1rem;
+    color: #444;
+  }
+  

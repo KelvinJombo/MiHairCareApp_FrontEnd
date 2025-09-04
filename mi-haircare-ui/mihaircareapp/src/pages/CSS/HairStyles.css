@@ -1,0 +1,131 @@
+.hairstyles-container {
+  padding: 2rem;
+}
+
+.hairstyles-header {
+  position: relative;
+  text-align: center;   
+  padding: 1rem 0;
+}
+
+.hairstyles-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+
+.hamburger {
+  position: absolute;
+  right: 1rem;  
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+
+/* Hamburger button */
+.hamburger {
+  font-size: 1.8rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+.hamburger:hover {
+  color: #2563eb;
+}
+
+/* Dropdown menu */
+.dropdown-menu {
+  position: absolute;
+  top: 3rem;
+  right: 0;
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+  z-index: 10;
+}
+
+.dropdown-link {
+  padding: 0.75rem 1rem;
+  text-decoration: none;
+  font-size: 1rem;
+  color: #333;
+  transition: background 0.2s ease;
+}
+
+.dropdown-link:hover {
+  background: #f3f4f6;
+  color: #2563eb;
+}
+
+/* Category page */
+.hairstyles-category-page {
+  padding: 2rem;
+  text-align: center;
+}
+
+.hairstyles-category-page h2 {
+  font-size: 2rem;
+  color: #444;
+  margin-bottom: 1rem;
+}
+
+.hairstyles-category-page p {
+  font-size: 1.1rem;
+  color: #666;
+}
+
+/* Hairstyles Grid */
+.hairstyles-grid {
+  display: flex;               
+  flex-wrap: wrap;             
+  gap: 1.5rem;                 
+  justify-content: center;     
+  margin-top: 2rem;
+}
+
+/* Banner */
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  background-color: #f0f4ff; /* light tone for Envogue theme */
+  padding: 2rem;
+  border-radius: 20px;
+  margin-bottom: 3rem;
+  align-items: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.banner-content {
+  flex: 1 1 300px;
+  padding: 1rem;
+}
+
+.banner-content h1 {
+  font-size: 2rem;
+  color: #1e40af; /* deep blue tone */
+  margin-bottom: 0.5rem;
+}
+
+.banner-content p {
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.banner-image {
+  flex: 1 1 300px;
+  text-align: center;
+}
+
+.banner-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 16px;
+}

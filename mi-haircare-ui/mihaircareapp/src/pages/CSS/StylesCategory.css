@@ -1,0 +1,95 @@
+.hairstyles-page {
+  padding: 2rem;
+  background-color: #fafafa;
+}
+
+.hairstyles-title {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #222;
+}
+
+/* --- Grid Layout --- */
+.hairstyle-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+  justify-items: center;
+}
+
+/* --- Card Styling --- */
+.hairstyle-card {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  width: 100%;
+  max-width: 280px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.hairstyle-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+
+/* --- Card Content --- */
+.hairstyle-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.hairstyle-info {
+  padding: 1rem;
+  text-align: center;
+}
+
+.hairstyle-info h3 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+.hairstyle-info .price {
+  font-weight: bold;
+  color: #e11d48; /* pink-ish accent */
+}
+
+/* --- ✅ Unified Banner Styling for All Pages --- */
+.banner {
+  background: linear-gradient(135deg, #ffe3ec, #fcd6e5);
+  padding: 2rem 1rem;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+  font-family: "Poppins", sans-serif;
+}
+
+.banner h1 {
+  font-size: 2rem;
+  color: #222;
+  margin-bottom: 0.5rem;
+}
+
+.banner p {
+  font-size: 1rem;
+  color: #666;
+}
+
+.banner-images {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+
+.banner-images img {
+  max-width: 200px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}

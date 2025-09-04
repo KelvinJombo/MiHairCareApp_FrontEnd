@@ -1,0 +1,144 @@
+.haircutz-container {
+  padding: 2rem;
+}
+
+.haircutz-title {
+  font-size: 2rem;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 2rem;
+  color: #222;
+}
+
+.haircutz-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.haircutz-card {
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.haircutz-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.haircutz-image {
+  width: 100%;
+  height: 16rem;
+  object-fit: cover;
+}
+
+.haircutz-content {
+  padding: 1rem;
+}
+
+.haircutz-content h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.haircutz-content p {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 0.75rem;
+}
+
+.haircutz-content .price {
+  font-weight: bold;
+  color: #e11d48; /* pink-600 */
+}
+
+.haircutz-page {
+  font-family: "Poppins", sans-serif;
+  padding: 1rem;
+  background-color: #fafafa;
+}
+
+.banner {
+  background: linear-gradient(135deg, #ffe3ec, #fcd6e5);
+  padding: 2rem 1rem;
+  text-align: center;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin-bottom: 2rem;
+}
+
+.banner h1 {
+  font-size: 2rem;
+  color: #222;
+  margin-bottom: 0.5rem;
+}
+
+.banner p {
+  font-size: 1rem;
+  color: #666;
+}
+
+.banner-images {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+
+.banner-images img {
+  max-width: 200px;
+  height: auto;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ✅ Haircutz Grid (kept from your original) */
+.haircutz-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.haircutz-card {
+  background: white;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.haircutz-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.haircutz-image {
+  width: 100%;
+  height: 16rem;
+  object-fit: cover;
+}
+
+.haircutz-content {
+  padding: 1rem;
+}
+
+.haircutz-content h2 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.haircutz-content p {
+  font-size: 0.95rem;
+  color: #555;
+  margin-bottom: 0.75rem;
+}
+
+.haircutz-content .price {
+  font-weight: bold;
+  color: #e11d48; /* pink-600 */
+}

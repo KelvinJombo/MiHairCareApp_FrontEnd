@@ -1,0 +1,33 @@
+/* Welcome Banner */
+.welcome-banner {
+    text-align: center;
+    padding: 2rem 1rem;
+    background: linear-gradient(135deg, #f8e8e8, #fdfdfd);
+    border-radius: 10px;
+    margin-bottom: 2rem;
+  }
+  
+  .welcome-banner h2 {
+    font-size: 2rem;
+    color: #333;
+    margin-bottom: 0.5rem;
+  }
+  
+  .welcome-banner p {
+    font-size: 1.1rem;
+    color: #555;
+  }
+  
+  /* Banner Image */
+  .banner-image {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .banner-image img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+  }
+  

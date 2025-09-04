@@ -1,0 +1,62 @@
+.gadget-page {
+    padding: 2rem;
+    background-color: #f9fafc;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .banner {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    background-color: #e3f2fd;
+    padding: 2rem;
+    border-radius: 20px;
+    margin-bottom: 3rem;
+    align-items: center;
+  }
+  
+  .banner-content {
+    flex: 1 1 300px;
+    padding: 1rem;
+  }
+  
+  .banner-content h1 {
+    font-size: 2rem;
+    color: #1a237e;
+  }
+  
+  .banner-content p {
+    font-size: 1.1rem;
+    color: #333;
+  }
+  
+  .banner-image {
+    flex: 1 1 300px;
+    text-align: center;
+  }
+  
+  .banner-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 16px;
+  }
+  
+  .section {
+    margin-top: 2rem;
+  }
+  
+  .section h2 {
+    font-size: 1.6rem;
+    margin-bottom: 1.5rem;
+    color: #2a2a2a;
+    border-bottom: 2px solid #ccc;
+    padding-bottom: 0.5rem;
+  }
+  
+  .product-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+  }
+  
