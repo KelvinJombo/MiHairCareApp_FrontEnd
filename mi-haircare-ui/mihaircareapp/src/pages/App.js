@@ -7,13 +7,17 @@ import Growth from "./Growth";
 import Treatment from "./Treatment";
 import Styling from "./Styling";
 import Cart from "./Cart";
-import LoginSignup from "./Login/LoginSignup";
+import Signup from "./Login/LoginSignup";
+import Login from "./Login/Login";
+import StylistLogin from "./Login/StylistLogin";
+import StylistSignup from "./Login/StylistSignup";
 import { Gadgets } from "./Gadgets";
 import { Extensions } from "./Extensions";
 import StylistProductsCategory from "./CareProducts";
 import { Product } from "./Product";
 import BookingPage from "../components/BookingPage/BookingPage";
-import HairstyleStylists from './HairstyleStylists';
+import HairstyleStylists from "./HairstyleStylists";
+import ForgotPassword from "./Login/ForgotPassword";
 
 // New Hairstyle pages
 import Hairstyles from "./HairStyles";
@@ -49,7 +53,18 @@ function App() {
 
           {/* Cart & Auth */}
           <Route path="/cart" element={<Cart />} />
-          <Route path="/login" element={<LoginSignup />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/stylist-login" element={<StylistLogin />} />
+          <Route path="/stylist-signup" element={<StylistSignup />} />
+          <Route
+            path="/forgot-password"
+            element={<ForgotPassword userType="User" />}
+          />
+          <Route
+            path="/stylist/forgot-password"
+            element={<ForgotPassword userType="Stylist" />}
+          />
 
           {/* Products */}
           <Route path="/product" element={<Product />}>
@@ -59,21 +74,26 @@ function App() {
           {/* Hairstyles Main */}
           <Route path="/hairstyles" element={<Hairstyles />} />
 
-        {/* African Hairstyles & Subcategories */}
-        <Route path="/hairstyles/african" element={<African />} />
-        <Route path="/hairstyles/african/braids" element={<Braids />} />
-        <Route path="/hairstyles/african/weaves" element={<Weaves />} />
-        <Route path="/hairstyles/african/dreadlocks" element={<Dreadlocks />} />
+          {/* African Hairstyles & Subcategories */}
+          <Route path="/hairstyles/african" element={<African />} />
+          <Route path="/hairstyles/african/braids" element={<Braids />} />
+          <Route path="/hairstyles/african/weaves" element={<Weaves />} />
+          <Route
+            path="/hairstyles/african/dreadlocks"
+            element={<Dreadlocks />}
+          />
 
-        {/* Other regions */}
-        <Route path="/hairstyles/european" element={<European />} />
-        <Route path="/hairstyles/asian" element={<Asian />} />
-        <Route path="/hairstyles/american" element={<American />} />
-        <Route path="/hairstyles/haircutz" element={<Haircutz />} />
+          {/* Other regions */}
+          <Route path="/hairstyles/european" element={<European />} />
+          <Route path="/hairstyles/asian" element={<Asian />} />
+          <Route path="/hairstyles/american" element={<American />} />
+          <Route path="/hairstyles/haircutz" element={<Haircutz />} />
 
-        <Route path="/booking" element={<BookingPage />} />
-        <Route path="/hairstyles/:hairStyleId" element={<HairstyleStylists />} />
-
+          <Route path="/booking" element={<BookingPage />} />
+          <Route
+            path="/hairstyles/:hairStyleId"
+            element={<HairstyleStylists />}
+          />
         </Routes>
         <Footer />
       </Router>
