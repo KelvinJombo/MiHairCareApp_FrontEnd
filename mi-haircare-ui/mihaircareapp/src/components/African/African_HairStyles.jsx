@@ -1,9 +1,37 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import "./African_HairStyles.css"
-import BannerImage from "../assets/images/sampleAfrik.jpeg"; 
+import "./African_HairStyles.css";
+import BannerImage from "../assets/images/sampleAfrik.jpeg";
 
 export default function AfricanHairstyles() {
+  const [hairstyles, setHairstyles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Fetch African hairstyles
+  useEffect(() => {
+    const fetchAfricanHairstyles = async () => {
+      try {
+        const response = await fetch("https://localhost:7261/api/HairStyles/all-African");
+        const result = await response.json();
+
+        // Ensure the data is an array
+        if (result && result.succeeded && Array.isArray(result.data)) {
+          setHairstyles(result.data);
+        } else {
+          setError("Unexpected response format from server.");
+        }
+      } catch (err) {
+        console.error("Error fetching hairstyles:", err);
+        setError("Failed to load hairstyles. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAfricanHairstyles();
+  }, []);
+
   return (
     <div className="african-page">
       {/* Banner */}
@@ -20,7 +48,7 @@ export default function AfricanHairstyles() {
         </div>
       </section>
 
-      {/* Category Grid */}
+      {/* Categories */}
       <section className="section">
         <h2>Categories</h2>
         <div className="category-grid">
@@ -28,17 +56,41 @@ export default function AfricanHairstyles() {
             <h3>Braids</h3>
             <p>Explore African braid styles</p>
           </Link>
-
           <Link to="/hairstyles/african/weaves" className="category-card">
             <h3>Weaves</h3>
             <p>Discover African weave styles</p>
           </Link>
-
           <Link to="/hairstyles/african/dreadlocks" className="category-card">
             <h3>Dreadlocks</h3>
             <p>See African dreadlock styles</p>
           </Link>
         </div>
+      </section>
+
+      {/* Hairstyles Section */}
+      <section className="section">
+        <h2>Available African Hairstyles</h2>
+
+        {loading ? (
+          <p>Loading hairstyles...</p>
+        ) : error ? (
+          <p className="error-text">{error}</p>
+        ) : hairstyles.length > 0 ? (
+          <div className="hairstyles-grid">
+            {hairstyles.map((style, index) => (
+              <div key={index} className="hairstyle-card">
+                <h3>{style.styleName}</h3>
+                <p>{style.description}</p>
+                <p>
+                  <strong>₦{style.priceTag.toLocaleString()}</strong>
+                </p>
+                {style.promotionalOffer && <span className="offer-badge">Promo!</span>}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p>No African hairstyles available right now.</p>
+        )}
       </section>
     </div>
   );

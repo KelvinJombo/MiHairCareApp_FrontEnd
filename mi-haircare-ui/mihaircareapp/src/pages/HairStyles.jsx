@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
-import envogueData from "../components/assets/envogue_data";
 import HairstyleCard from "../components/HairStyleCard/HairStyleCard";
 import "./CSS/HairStyles.css";
 import BannerImage from "../components/assets/images/curlybraids.webp";
@@ -17,8 +16,38 @@ const categories = [
 const HairStyles = () => {
   const { category } = useParams();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [hairstyles, setHairstyles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
-  // If category param exists but not envogue → Show placeholder
+  // ✅ Fetch Hairstyles from API
+  useEffect(() => {
+    const fetchHairstyles = async () => {
+      try {
+        const response = await fetch("https://localhost:7261/api/HairStyles/all-HairStyles");
+        const result = await response.json();
+  
+        console.log("✅ API Response:", result);
+  
+        // ✅ Get the array from result.data
+        if (Array.isArray(result.data)) {
+          setHairstyles(result.data);
+        } else {
+          console.error("Unexpected response format:", result);
+          setHairstyles([]); // fallback to empty
+        }
+      } catch (err) {
+        console.error("Error fetching hairstyles:", err);
+        setError("Failed to load hairstyles. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    fetchHairstyles();
+  }, []);
+  
+  // ✅ Handle Category Pages
   if (category && category !== "envogue") {
     return (
       <div className="hairstyles-category-page">
@@ -31,7 +60,16 @@ const HairStyles = () => {
     );
   }
 
-  // Default page → show Envogue hairstyles
+  // ✅ Loading & Error States
+  if (loading) {
+    return <p className="loading-text">Loading hairstyles...</p>;
+  }
+
+  if (error) {
+    return <p className="error-text">{error}</p>;
+  }
+
+  // ✅ Default Envogue / All Hairstyles Page
   return (
     <div className="hairstyles-container">
       {/* ✅ Banner Section */}
@@ -76,15 +114,15 @@ const HairStyles = () => {
         )}
       </div>
 
-      {/* ✅ Envogue Hairstyles Grid */}
+      {/* ✅ Hairstyles Grid */}
       <div className="hairstyles-grid">
-        {envogueData.map((style) => (
+        {hairstyles.map((style) => (
           <HairstyleCard
             key={style.id}
-            image={style.image}
-            name={style.name}
+            image={style.photos?.[0]?.url || "/placeholder.jpg"}
+            name={style.styleName}
             description={style.description}
-            price={style.price}
+            price={style.priceTag}
           />
         ))}
       </div>

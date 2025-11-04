@@ -3,19 +3,24 @@ import "../CSS/LoginSignUp.css";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "../../../src/firebaseConfig";
 import axios from "axios";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState("");
 
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from || "/";
+
   const apiBaseUrl =
     process.env.REACT_APP_API_BASE_URL || "https://localhost:7261/api";
 
-  // ✅ Normal login
+  // ✅ Normal Login
   const handleLogin = async () => {
-    if (!email.trim() || !password.trim()) {
-      alert("Please enter your email and password.");
+    if (!email || !password) {
+      setStatus("❌ Please enter your email and password.");
       return;
     }
 
@@ -26,15 +31,33 @@ const Login = () => {
         payload
       );
 
-      setStatus(`✅ Welcome back, ${response.data?.data?.userName || "User"}!`);
-      localStorage.setItem("token", response.data?.data?.token);
+      const data = response.data?.data;
+      if (!data?.token) {
+        setStatus("❌ Login failed. Please check your credentials.");
+        return;
+      }
+
+      // Store login info locally
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userId", data.userId);
+      localStorage.setItem("email", data.email);
+
+      setStatus(`✅ Welcome back, ${data.email}!`);
+
+      // Redirect after a short delay
+      setTimeout(() => navigate(from, { replace: true }), 1000);
     } catch (error) {
       console.error("Login error:", error);
-      setStatus(`❌ ${error.response?.data?.message || "Login failed."}`);
+      setStatus(
+        `❌ ${
+          error.response?.data?.message ||
+          "Unable to log in. Please try again."
+        }`
+      );
     }
   };
 
-  // ✅ Google login
+  // ✅ Google Login
   const handleGoogleLogin = async () => {
     try {
       const provider = new GoogleAuthProvider();
@@ -43,11 +66,24 @@ const Login = () => {
       const idToken = await user.getIdToken();
 
       const response = await axios.post(
-        `${apiBaseUrl}/Authentication/GoogleLogin`,
+        `${apiBaseUrl}/Authentication/login-with-google`,
         { idToken }
       );
-      setStatus(`✅ Welcome back, ${user.displayName || "User"}!`);
-      localStorage.setItem("token", response.data?.data?.token);
+
+      const data = response.data?.data;
+      if (!data?.token) {
+        setStatus("❌ Google login failed. Please try again.");
+        return;
+      }
+
+      // Store token and user info
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("userId", data.userId);
+      localStorage.setItem("email", data.email);
+
+      setStatus(`✅ Welcome back, ${data.email}!`);
+
+      setTimeout(() => navigate(from, { replace: true }), 1000);
     } catch (error) {
       console.error("Google login failed:", error);
       setStatus(`❌ ${error.message || "Google Sign-In failed."}`);

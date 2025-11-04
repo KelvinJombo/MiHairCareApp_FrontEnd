@@ -1,11 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react"; 
 import "./Navbar.css";
 import logo from "../assets/images/care_products/HairCareLogo.jpg";
 import cart_icon from "../assets/images/cart.jpeg";
 import { Link } from "react-router-dom";
+import CartContext from "../../Context/CartContext"; 
 
 export const Navbar = () => {
   const [menu, setMenu] = useState("shop");
+  const { cart } = useContext(CartContext); // ✅ now works properly
+
+  const itemCount = cart?.items?.reduce((sum, item) => sum + item.quantity, 0) || 0;
 
   return (
     <div className="navbar">
@@ -24,6 +28,7 @@ export const Navbar = () => {
             <p>MI HAIR CARE</p>
           </Link>
         </div>
+
         <ul className="nav-menu">
           <li onClick={() => setMenu("careProducts")}>
             <Link style={{ textDecoration: "none" }} to="/care-products">
@@ -51,13 +56,15 @@ export const Navbar = () => {
           </li>
         </ul>
       </div>
+
       <div className="nav-login-cart">
         <Link to="/login">
           <button>Login</button>
         </Link>
-        <Link to="/cart" className="cart-icon-wrapper">
-          <img src={cart_icon} alt="" />
-          <div className="nav-cart-count">0</div>
+
+        <Link to="/cart" className="cart-icon-wrapper">           
+          {itemCount > 0 && <span className="nav-cart-count">{itemCount}</span>}
+          <img src={cart_icon} alt="Cart Icon" />
         </Link>
       </div>
     </div>

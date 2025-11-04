@@ -1,0 +1,58 @@
+.thank-you-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 90vh;
+    text-align: center;
+    background: linear-gradient(135deg, #fff1f7, #ffe7ef);
+    font-family: "Poppins", sans-serif;
+    color: #333;
+    animation: fadeIn 0.8s ease-in-out;
+  }
+  
+  .thank-you-page h1 {
+    font-size: 2.8rem;
+    color: #e03c8a;
+    font-weight: 700;
+    margin-bottom: 20px;
+  }
+  
+  .thank-you-page p {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+  
+  .thank-you-page h3 {
+    font-size: 1.4rem;
+    color: #444;
+    margin-bottom: 30px;
+  }
+  
+  .btn-primary {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #e03c8a;
+    color: #fff;
+    border-radius: 30px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s;
+  }
+  
+  .btn-primary:hover {
+    background-color: #c12d73;
+    transform: translateY(-2px);
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  
