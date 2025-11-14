@@ -2,26 +2,35 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Breadcrum } from "../components/Breadcrum/Breadcrum";
 import { ProductDisplay } from "../components/ProductDisplay/ProductDisplay";
+import apiClient from "../api/client"; // ✅ Use centralized API client
 
 export const Product = () => {
   const { productId } = useParams();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchProduct = async () => {
+      if (!productId) {
+        setError("Invalid product ID.");
+        setLoading(false);
+        return;
+      }
+
       try {
-        // ✅ Adjust your API to match your product detail endpoint
-        const response = await fetch(`https://localhost:7261/api/Products/getById/${productId}`);         
-        const result = await response.json();
+        // ✅ Use your reusable apiClient for consistency
+        const response = await apiClient.get(`/products/getById/${productId}`);
+        const result = response.data;
 
         if (result.succeeded && result.data) {
           setProduct(result.data);
         } else {
-          console.error("Failed to load product:", result.message);
+          setError(result.message || "Failed to fetch product details.");
         }
-      } catch (error) {
-        console.error("Error fetching product:", error);
+      } catch (err) {
+        console.error("❌ Error fetching product:", err);
+        setError("Unable to load product. Please try again later.");
       } finally {
         setLoading(false);
       }
@@ -30,11 +39,14 @@ export const Product = () => {
     fetchProduct();
   }, [productId]);
 
-  if (loading) return <p>Loading...</p>;
+  // ✅ Handle loading and error states clearly
+  if (loading)
+    return <p className="loading-text">Loading product details...</p>;
+  if (error) return <p className="error-text">{error}</p>;
   if (!product) return <p>Product not found.</p>;
 
   return (
-    <div>
+    <div className="product-page">
       <Breadcrum product={product} />
       <ProductDisplay product={product} />
     </div>

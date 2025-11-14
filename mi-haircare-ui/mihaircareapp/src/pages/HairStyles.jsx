@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import HairstyleCard from "../components/HairStyleCard/HairStyleCard";
+import apiClient from "../api/client"; // ✅ import centralized API client
 import "./CSS/HairStyles.css";
 import BannerImage from "../components/assets/images/curlybraids.webp";
 
@@ -20,34 +21,32 @@ const HairStyles = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
-  // ✅ Fetch Hairstyles from API
   useEffect(() => {
     const fetchHairstyles = async () => {
       try {
-        const response = await fetch("https://localhost:7261/api/HairStyles/all-HairStyles");
-        const result = await response.json();
-  
+        // ✅ use apiClient instead of fetch
+        const response = await apiClient.get("/HairStyles/all-HairStyles");
+        const result = response.data;
+
         console.log("✅ API Response:", result);
-  
-        // ✅ Get the array from result.data
+
         if (Array.isArray(result.data)) {
           setHairstyles(result.data);
         } else {
           console.error("Unexpected response format:", result);
-          setHairstyles([]); // fallback to empty
+          setHairstyles([]);
         }
       } catch (err) {
-        console.error("Error fetching hairstyles:", err);
+        console.error("❌ Error fetching hairstyles:", err);
         setError("Failed to load hairstyles. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
-  
+
     fetchHairstyles();
   }, []);
-  
-  // ✅ Handle Category Pages
+
   if (category && category !== "envogue") {
     return (
       <div className="hairstyles-category-page">
@@ -60,16 +59,9 @@ const HairStyles = () => {
     );
   }
 
-  // ✅ Loading & Error States
-  if (loading) {
-    return <p className="loading-text">Loading hairstyles...</p>;
-  }
+  if (loading) return <p className="loading-text">Loading hairstyles...</p>;
+  if (error) return <p className="error-text">{error}</p>;
 
-  if (error) {
-    return <p className="error-text">{error}</p>;
-  }
-
-  // ✅ Default Envogue / All Hairstyles Page
   return (
     <div className="hairstyles-container">
       {/* ✅ Banner Section */}

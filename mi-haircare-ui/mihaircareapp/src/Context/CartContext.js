@@ -1,134 +1,116 @@
 // src/Context/CartContext.js
-import React, { createContext, useState, useEffect } from "react";
-import axios from "axios";
+import React, { createContext, useState, useEffect, useCallback } from "react";
+import apiClient from "../api/client";
 
 const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const [cart, setCart] = useState(null);
+  const [cart, setCart] = useState({ items: [] });
   const [loading, setLoading] = useState(false);
 
-  const apiBaseUrl =
-    process.env.REACT_APP_API_BASE_URL || "https://localhost:7261/api";
-  const [token, setToken] = useState(localStorage.getItem("token"));
-  const [userId, setUserId] = useState(localStorage.getItem("userId"));
+  // NOTE: get userId fresh in functions to avoid stale values
+  const getUserId = () => localStorage.getItem("userId");
 
-  useEffect(() => {
-    const handleStorageChange = () => {
-      setToken(localStorage.getItem("token"));
-      setUserId(localStorage.getItem("userId"));
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    return () => window.removeEventListener("storage", handleStorageChange);
-  }, []);
-
-  const axiosInstance = axios.create({
-    baseURL: `${apiBaseUrl}/Cart`,
-    headers: {
-      Authorization: token ? `Bearer ${token}` : "",
-      "Content-Type": "application/json",
-    },
-  });
-
-  // ✅ View Cart
-  const fetchCart = async () => {
-    if (!userId) return;
-    try {
-      setLoading(true);
-      const response = await axiosInstance.get(`/${userId}`);
-      setCart(response.data?.data || response.data);
-    } catch (err) {
-      console.error("❌ Error fetching cart:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (!token || !userId) {
+  const fetchCart = useCallback(async () => {
+    const userId = getUserId();
+    if (!userId) {
       setCart({ items: [] });
       return;
     }
 
-    let fetched = false;
+    try {
+      setLoading(true);
+      const response = await apiClient.get(`/Cart/${userId}`);
+      setCart(response.data?.data || response.data || { items: [] });
+    } catch (err) {
+      console.error("❌ Error fetching cart:", err);
+      setCart({ items: [] });
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
-    const fetchOnce = async () => {
-      if (!fetched) {
-        fetched = true;
-        await fetchCart();
-      }
-    };
+  useEffect(() => {
+    fetchCart();
+  }, [fetchCart]);
 
-    fetchOnce();
-  }, [token, userId]);
+  const mapToAddToCartDto = (product) => ({
+    Id:
+      product.Id ||
+      product.id ||
+      product.HaircareProductId ||
+      product.haircareProductId ||
+      product.productId,
+    Quantity: product.quantity || 1,
+  });
 
-  // ✅ Add to Cart
   const addToCart = async (product) => {
-    const token = localStorage.getItem("token");
-    const userId = localStorage.getItem("userId"); // assuming you stored this at login
-
-    if (!token) {
+    const userId = getUserId();
+    if (!userId) {
       alert("Please log in to add to cart.");
       window.location.href = "/login";
       return;
     }
 
+    const dto = mapToAddToCartDto(product);
+
+    if (!dto.Id) {
+      alert("Invalid product ID");
+      console.error("❌ DTO missing Id:", dto, "Product:", product);
+      return;
+    }
+
     try {
-      const dto = {
-        productId: product.id || product.productId,
-        quantity: 1,
-      };
+      const response = await apiClient.post(`/Cart/add?userId=${userId}`, dto);
+      setCart(response.data?.data || response.data || { items: [] });
 
-      console.log("Adding to cart with dto:", dto, "and userId:", userId);
-
-      const response = await axiosInstance.post(`/add?userId=${userId}`, dto, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      setCart(response.data?.data || response.data);
-      alert(`${product.name || product.productName} added to cart!`);
+      window.location.href = "/cart";
     } catch (err) {
       console.error("❌ Add to cart error:", err);
-      alert("Failed to add item to cart.");
+      alert(
+        err.response?.data?.message ||
+          "Failed to add item to cart. Please try again."
+      );
     }
   };
 
-  // ✅ Remove Item
   const removeItem = async (productId) => {
-    if (!userId) return alert("Please log in first.");
-
+    const userId = getUserId();
+    if (!userId) {
+      alert("Please log in to manage cart.");
+      return;
+    }
     try {
-      await axiosInstance.delete(`/${userId}/item/${productId}`);
+      await apiClient.delete(`/Cart/${userId}/item/${productId}`);
       await fetchCart();
-      alert("Item removed successfully!");
     } catch (err) {
       console.error("❌ Remove item error:", err);
     }
   };
 
-  // ✅ Clear Cart
   const clearCart = async () => {
-    if (!userId) return alert("Please log in first.");
+    const userId = getUserId();
+    if (!userId) {
+      alert("Please log in to manage cart.");
+      return;
+    }
     if (!window.confirm("Are you sure you want to clear your cart?")) return;
-
     try {
-      await axiosInstance.delete(`/${userId}`);
+      await apiClient.delete(`/Cart/${userId}`);
       setCart({ items: [] });
-      alert("Cart cleared!");
     } catch (err) {
       console.error("❌ Clear cart error:", err);
     }
   };
 
-  // ✅ Checkout Cart
   const checkoutCart = async () => {
-    if (!userId) return alert("Please log in first.");
-
+    const userId = getUserId();
+    if (!userId) {
+      alert("Please log in to checkout.");
+      return;
+    }
     try {
-      const response = await axiosInstance.post(`/checkout?userId=${userId}`);
+      const response = await apiClient.post(`/Cart/checkout?userId=${userId}`);
       alert(response.data?.message || "Checkout successful!");
       setCart({ items: [] });
     } catch (err) {

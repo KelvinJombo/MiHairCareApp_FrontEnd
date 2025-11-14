@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard/ProductCard";
+import apiClient from "../api/client";
 import "../pages/CSS/ProductPages.css";
 
 const Growth = () => {
@@ -10,16 +11,18 @@ const Growth = () => {
   useEffect(() => {
     const fetchGrowthProducts = async () => {
       try {
-        const response = await fetch("https://localhost:7261/api/Products/growth");
-        const result = await response.json();
+        const response = await apiClient.get("/Products/growth");
+        const result = response.data;
 
-        if (result && result.succeeded && Array.isArray(result.data)) {
+        if (result?.succeeded && Array.isArray(result.data)) {
           setProducts(result.data);
         } else {
-          setError("Unexpected response format from server.");
+          setError(
+            result?.message || "Unexpected response format from server."
+          );
         }
       } catch (err) {
-        console.error("Error fetching Growth products:", err);
+        console.error("❌ Error fetching Growth products:", err);
         setError("Failed to load Growth products. Please try again later.");
       } finally {
         setLoading(false);
@@ -39,16 +42,14 @@ const Growth = () => {
         <p className="error-text">{error}</p>
       ) : products.length > 0 ? (
         <div className="product-list">
-          {products.map((product, index) => (
+          {products.map((product) => (
             <ProductCard
-              key={index}
+              key={product.id || product.Id || product.haircareProductId}
               product={{
-                id: index,
-                name: product.productName,
-                brand: product.brand,
-                price: product.price,
-                image: product.imageUrl,
-                stockQuantity: product.stockQuantity,
+                ...product,
+                Id: product.Id || product.id || product.haircareProductId,
+                StockQuantity:
+                  product.StockQuantity || product.stockQuantity || 1,
               }}
             />
           ))}

@@ -42,7 +42,7 @@ const Login = () => {
       localStorage.setItem("userId", data.userId);
       localStorage.setItem("email", data.email);
 
-      setStatus(`✅ Welcome back, ${data.email}!`);
+      setStatus(`✅ Welcome, ${data.email}!`);
 
       // Redirect after a short delay
       setTimeout(() => navigate(from, { replace: true }), 1000);

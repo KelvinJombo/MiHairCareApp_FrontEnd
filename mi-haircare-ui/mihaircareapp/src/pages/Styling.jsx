@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard/ProductCard";
+import client from "../api/client"; // ✅ Use your centralized axios instance
 import "../pages/CSS/ProductPages.css";
 
 const Styling = () => {
@@ -10,8 +11,9 @@ const Styling = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const response = await fetch("https://localhost:7261/api/Products/styling");
-        const result = await response.json();
+        // ✅ Use apiClient instead of fetch
+        const response = await client.get("/Products/styling");
+        const result = response.data;
 
         if (result.succeeded && result.data) {
           setProducts(result.data);
@@ -19,6 +21,7 @@ const Styling = () => {
           setError(result.message || "Failed to fetch styling products.");
         }
       } catch (err) {
+        console.error("❌ Error fetching styling products:", err);
         setError("Unable to connect to the server.");
       } finally {
         setLoading(false);
@@ -28,25 +31,29 @@ const Styling = () => {
     fetchProducts();
   }, []);
 
-  if (loading) return <p className="loading-text">Loading styling products...</p>;
+  if (loading)
+    return <p className="loading-text">Loading styling products...</p>;
   if (error) return <p className="error-text">{error}</p>;
 
   return (
     <div className="product-page">
       <h2>Hair Styling Products</h2>
       <div className="product-list">
-        {products.map((product, index) => (
-          <ProductCard
-            key={index}
-            product={{
-              id: index,
-              name: product.productName,
-              brand: product.brand,
-              price: product.price,
-              image: product.imageUrl,
-            }}
-          />
-        ))}
+        {products.length > 0 ? (
+          products.map((product, index) => (
+            <ProductCard
+              key={
+                product.id ||
+                product.Id ||
+                product.productId ||
+                product.HaircareProductId
+              }
+              product={product}
+            />
+          ))
+        ) : (
+          <p>No treatment products available at the moment.</p>
+        )}
       </div>
     </div>
   );

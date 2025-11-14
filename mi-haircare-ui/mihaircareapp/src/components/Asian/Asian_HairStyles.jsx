@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import client from "../../api/client";
 import HairstyleGrid from "../HairStyleGrid/HairStyleGrid";
 import "../../../src/pages/CSS/StylesCategory.css";
 import BannerImage from "../assets/images/pretty.avif";
@@ -11,8 +12,8 @@ export default function Asian_HairStyles() {
   useEffect(() => {
     const fetchAsianHairstyles = async () => {
       try {
-        const response = await fetch("https://localhost:7261/api/HairStyles/all-Asian");
-        const result = await response.json();
+        const response = await client.get("/HairStyles/all-Asian");
+        const result = await response.data();
 
         if (result && result.succeeded && Array.isArray(result.data)) {
           setHairstyles(result.data);

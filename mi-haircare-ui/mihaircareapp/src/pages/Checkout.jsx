@@ -1,12 +1,19 @@
 // src/pages/Checkout.jsx
+import { loadStripe } from "@stripe/stripe-js";
+import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CartContext from "../Context/CartContext";
+import apiClient from "../api/client";
 import "./CSS/Checkout.css";
 
-const Checkout = () => {
+const stripePromise = loadStripe("pk_test_51PaarAJYC15LLJQsywJu7aMTftQfnIQ6oy5mbPIW2sSNeQcI8zZrxeJApcvhPHhzMp6hJv8dk9hxYS1ph2I2IyMi00j8rwaOA1");
+
+const CheckoutForm = () => {
   const { cart, loading, checkoutCart } = useContext(CartContext);
   const navigate = useNavigate();
+  const stripe = useStripe();
+  const elements = useElements();
 
   const [form, setForm] = useState({
     fullName: "",
@@ -18,9 +25,7 @@ const Checkout = () => {
 
   const [processing, setProcessing] = useState(false);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,22 +33,57 @@ const Checkout = () => {
       alert("Your cart is empty!");
       return;
     }
+    if (!stripe || !elements) return;
 
     setProcessing(true);
+
     try {
-      // Send checkout request using CartContext function
-      await checkoutCart({
-        ...form,
-        cartItems: cart.items,
+      // 🧮 Calculate total amount
+      const totalAmount =
+        cart.totalAmount ||
+        cart.items.reduce((sum, item) => sum + item.totalPrice, 0);
+
+      // 📨 Create PaymentIntent using your apiClient
+      const response = await apiClient.post("/payment/create-intent", {
+        amount: totalAmount,
+        currency: "GBP",
+        customerEmail: form.email,
       });
 
-      // Navigate to Thank You page on success
-      navigate("/thank-you", {
-        state: { name: form.fullName, total: cart.totalAmount },
+      const { clientSecret } = response.data;
+      if (!clientSecret) throw new Error("Client secret not returned from backend");
+
+      // 💳 Confirm payment on client
+      const result = await stripe.confirmCardPayment(clientSecret, {
+        payment_method: {
+          card: elements.getElement(CardElement),
+          billing_details: {
+            name: form.fullName,
+            email: form.email,
+          },
+        },
       });
+
+      if (result.error) {
+        console.error("Payment error:", result.error);
+        alert(result.error.message);
+      } else if (result.paymentIntent?.status === "succeeded") {
+        console.log("✅ Payment successful!");
+        alert("Payment successful!");
+
+        // Proceed to backend checkout logic
+        await checkoutCart({
+          ...form,
+          cartItems: cart.items,
+        });
+
+        navigate("/thank-you", {
+          state: { name: form.fullName, total: totalAmount },
+        });
+      }
     } catch (error) {
-      console.error("Checkout failed:", error);
-      alert("Something went wrong during checkout. Please try again.");
+      console.error("❌ Checkout failed:", error);
+      alert(error.response?.data?.message || "Something went wrong. Please try again.");
     } finally {
       setProcessing(false);
     }
@@ -52,127 +92,87 @@ const Checkout = () => {
   if (loading) return <p>Loading cart...</p>;
 
   return (
-    <div className="checkout-page">
-      <h1 className="checkout-title">Checkout</h1>
+    <form className="checkout-form" onSubmit={handleSubmit}>
+      <h2>Billing Details</h2>
 
-      <div className="checkout-container">
-        {/* 🧾 Left Side: Customer Info */}
-        <form className="checkout-form" onSubmit={handleSubmit}>
-          <h2>Billing Details</h2>
-          <div className="form-group">
-            <label>Full Name</label>
-            <input
-              type="text"
-              name="fullName"
-              placeholder="Enter your full name"
-              value={form.fullName}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Email Address</label>
-            <input
-              type="email"
-              name="email"
-              placeholder="Enter your email"
-              value={form.email}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Delivery Address</label>
-            <textarea
-              name="address"
-              placeholder="Enter your delivery address"
-              value={form.address}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Phone Number</label>
-            <input
-              type="tel"
-              name="phone"
-              placeholder="Enter your phone number"
-              value={form.phone}
-              onChange={handleChange}
-              required
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Payment Method</label>
-            <select
-              name="paymentMethod"
-              value={form.paymentMethod}
-              onChange={handleChange}
-            >
-              <option value="card">Pay with Card</option>
-              <option value="stripe">Pay with Stripe</option>
-              <option value="delivery">Pay on Delivery</option>
-            </select>
-          </div>
-
-          <button
-            type="submit"
-            className="checkout-btn"
-            disabled={processing || !cart?.items?.length}
-          >
-            {processing ? "Processing..." : "Confirm & Pay"}
-          </button>
-        </form>
-
-        {/* 💰 Right Side: Cart Summary */}
-        <div className="checkout-summary">
-          <h2>Order Summary</h2>
-
-          {!cart?.items?.length ? (
-            <p>Your cart is empty.</p>
-          ) : (
-            <>
-              <ul className="summary-list">
-                {cart.items.map((item) => (
-                  <li key={item.productId} className="summary-item">
-                    <img
-                      src={item.imageUrl || "/placeholder.png"}
-                      alt={item.productName}
-                      className="summary-img"
-                    />
-                    <div>
-                      <p className="summary-name">{item.productName}</p>
-                      <p className="summary-price">
-                        ₦{item.unitPrice.toLocaleString()} × {item.quantity}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ul>
-
-              <div className="summary-total">
-                <p>Total:</p>
-                <h3>
-                  ₦
-                  {(
-                    cart.totalAmount ||
-                    cart.items.reduce(
-                      (sum, item) => sum + item.totalPrice,
-                      0
-                    )
-                  ).toLocaleString()}
-                </h3>
-              </div>
-            </>
-          )}
-        </div>
+      <div className="form-group">
+        <label>Full Name</label>
+        <input
+          type="text"
+          name="fullName"
+          value={form.fullName}
+          onChange={handleChange}
+          required
+        />
       </div>
-    </div>
+
+      <div className="form-group">
+        <label>Email</label>
+        <input
+          type="email"
+          name="email"
+          value={form.email}
+          onChange={handleChange}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Address</label>
+        <textarea
+          name="address"
+          value={form.address}
+          onChange={handleChange}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Phone</label>
+        <input
+          type="tel"
+          name="phone"
+          value={form.phone}
+          onChange={handleChange}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Payment Method</label>
+        <select
+          name="paymentMethod"
+          value={form.paymentMethod}
+          onChange={handleChange}
+        >
+          <option value="card">Pay with Card</option>
+          <option value="delivery">Pay on Delivery</option>
+        </select>
+      </div>
+
+      {form.paymentMethod === "card" && (
+        <div className="form-group">
+          <label>Card Details</label>
+          <div className="card-element-container">
+            <CardElement options={{ style: { base: { fontSize: "16px" } } }} />
+          </div>
+        </div>
+      )}
+
+      <button type="submit" disabled={processing || !cart?.items?.length}>
+        {processing ? "Processing..." : "Confirm & Pay"}
+      </button>
+    </form>
   );
 };
+
+const Checkout = () => (
+  <div className="checkout-page">
+    <h1>Checkout</h1>
+    <Elements stripe={stripePromise}>
+      <CheckoutForm />
+    </Elements>
+  </div>
+);
 
 export default Checkout;

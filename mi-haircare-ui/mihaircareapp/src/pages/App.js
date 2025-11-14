@@ -15,7 +15,7 @@ import Login from "./Login/Login";
 import StylistLogin from "./Login/StylistLogin";
 import StylistSignup from "./Login/StylistSignup";
 import { Gadgets } from "./Gadgets";
-import { Extensions } from "./Extensions";
+import Extensions from "./Extensions";
 import StylistProductsCategory from "./CareProducts";
 import { Product } from "./Product";
 import BookingPage from "../components/BookingPage/BookingPage";

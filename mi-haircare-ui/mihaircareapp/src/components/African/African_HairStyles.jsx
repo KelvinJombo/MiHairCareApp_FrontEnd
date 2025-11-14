@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import client from "../../api/client";
 import "./African_HairStyles.css";
 import BannerImage from "../assets/images/sampleAfrik.jpeg";
 
@@ -12,8 +13,8 @@ export default function AfricanHairstyles() {
   useEffect(() => {
     const fetchAfricanHairstyles = async () => {
       try {
-        const response = await fetch("https://localhost:7261/api/HairStyles/all-African");
-        const result = await response.json();
+        const response = await client.get("/HairStyles/all-African");
+        const result = await response.data();
 
         // Ensure the data is an array
         if (result && result.succeeded && Array.isArray(result.data)) {

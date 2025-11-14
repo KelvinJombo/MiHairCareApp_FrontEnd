@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ProductCard from "../components/ProductCard/ProductCard";
 import BannerImage from "../components/assets/images/care_products/hair-extensions/Hairs.jpeg";
+import apiClient from "../api/client";
 import "./CSS/Extensions.css";
 
 const Extensions = () => {
@@ -11,33 +12,30 @@ const Extensions = () => {
   useEffect(() => {
     const fetchExtensions = async () => {
       try {
-        const response = await fetch(
-          "https://localhost:7261/api/Products/extensions"
-        );
-        const result = await response.json();
-
-        if (result.succeeded && result.data) {
+        const response = await apiClient.get("/Products/extensions");
+        const result = response.data;
+        if (result?.succeeded && Array.isArray(result.data)) {
           setExtensions(result.data);
+        } else if (Array.isArray(result)) {
+          setExtensions(result);
         } else {
-          setError(result.message || "Failed to fetch extensions.");
+          setError(result?.message || "Failed to fetch extensions.");
         }
       } catch (err) {
+        console.error("❌ Fetch error:", err);
         setError("Unable to connect to the server.");
       } finally {
         setLoading(false);
       }
     };
-
     fetchExtensions();
   }, []);
 
-  if (loading)
-    return <p className="loading-text">Loading hair extensions...</p>;
+  if (loading) return <p className="loading-text">Loading hair extensions...</p>;
   if (error) return <p className="error-text">{error}</p>;
 
   return (
     <div className="extensions-page">
-      {/* ✅ Banner Section */}
       <section className="banner">
         <div className="banner-content">
           <h1>Explore Premium Hair Extensions</h1>
@@ -48,20 +46,10 @@ const Extensions = () => {
         </div>
       </section>
 
-      {/* ✅ Extensions Product List */}
       <section className="extensions-list">
         {extensions.length > 0 ? (
-          extensions.map((product, index) => (
-            <ProductCard
-              key={index}
-              product={{
-                id: index,
-                name: product.productName,
-                brand: product.brand,
-                price: product.price,
-                image: product.imageUrl,
-              }}
-            />
+          extensions.map((product) => (
+            <ProductCard key={product.id || product.Id || product.productId || product.HaircareProductId} product={product} />
           ))
         ) : (
           <p>No extensions available at the moment.</p>
@@ -71,4 +59,4 @@ const Extensions = () => {
   );
 };
 
-export { Extensions };
+export default Extensions;

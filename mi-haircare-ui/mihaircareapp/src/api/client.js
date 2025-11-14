@@ -1,20 +1,28 @@
 // src/api/client.js
-import axios from 'axios';
-const baseURL =   
-  process.env.REACT_APP_API_BASE_URL || // CRA
-  '';
+import axios from "axios";
 
-export const client = axios.create({
+const baseURL =
+  process.env.REACT_APP_API_BASE_URL || // CRA / Vite env
+  process.env.VITE_API_BASE_URL || // Vite
+  "https://localhost:7261/api";
+
+const apiClient = axios.create({
   baseURL,
-  headers: { 'Content-Type': 'application/json' },
+  headers: { "Content-Type": "application/json" },
+  withCredentials: false,
 });
 
-// GET /api/users/hairstylists/{hairStyleId}
-export async function getStylistsByHairStyle(hairStyleId) {
-  const { data } = await client.get(`/api/users/hairstylists/${hairStyleId}`);
-  // Expecting your ApiResponse envelope: { success, message, data }
-  if (!data?.success) {
-    throw new Error(data?.message || 'Failed to load stylists');
-  }
-  return data.data || [];
-}
+// attach token if present
+apiClient.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
+export default apiClient;

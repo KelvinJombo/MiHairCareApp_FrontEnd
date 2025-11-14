@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import client from "../../api/client";
 import HairstyleGrid from "../HairStyleGrid/HairStyleGrid";
 import "../../../src/pages/CSS/StylesCategory.css";
 import banner_image from "../assets/images/fullbrownie.webp";
@@ -11,8 +12,8 @@ export default function EuropeanHairstyles() {
   useEffect(() => {
     const fetchEuropeanHairstyles = async () => {
       try {
-        const response = await fetch(
-          "https://localhost:7261/api/HairStyles/all-European"
+        const response = await client.get(
+          "/HairStyles/all-European"
         );
         const result = await response.json();
 
