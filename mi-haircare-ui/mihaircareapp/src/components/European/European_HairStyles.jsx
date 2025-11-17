@@ -12,13 +12,17 @@ export default function EuropeanHairstyles() {
   useEffect(() => {
     const fetchEuropeanHairstyles = async () => {
       try {
-        const response = await client.get(
-          "/HairStyles/all-European"
-        );
-        const result = await response.json();
+        const response = await client.get("/HairStyles/all-European");
+        const result = response.data;
 
         if (result && result.succeeded && Array.isArray(result.data)) {
-          setHairstyles(result.data);
+          const mapped = result.data.map((item) => ({
+            id: item.hairStyleId,
+            name: item.styleName,
+            price: item.priceTag,
+            image: item.photos?.[0]?.url || "/placeholder.jpg",
+          }));
+          setHairstyles(mapped);
         } else {
           setError("Unexpected response format from server.");
         }

@@ -22,6 +22,7 @@ import BookingPage from "../components/BookingPage/BookingPage";
 import HairstyleStylists from "./HairstyleStylists";
 import ForgotPassword from "./Login/ForgotPassword";
 
+
 // New Hairstyle pages
 import Hairstyles from "./HairStyles";
 import African from "../components/African/African_HairStyles";
@@ -29,6 +30,7 @@ import American from "../components/American/American_HairStyles";
 import Asian from "../components/Asian/Asian_HairStyles";
 import European from "../components/European/European_HairStyles";
 import Haircutz from "../components/Haircutz/HairCutz";
+import AdminHairCare from "../components/AdminHairCare/AdminHairCare";
 
 // African subcategories
 import Braids from "../components/African/Braids";
@@ -82,6 +84,7 @@ function App() {
 
             {/* Hairstyles Main */}
             <Route path="/hairstyles" element={<Hairstyles />} />
+            <Route path="/admin/haircare" element={<AdminHairCare />} />
 
             {/* African Hairstyles & Subcategories */}
             <Route path="/hairstyles/african" element={<African />} />

@@ -1,107 +1,133 @@
 .care-category-card {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 240px;
-    height: 150px;    
-    background: linear-gradient(135deg, #ffe3ec, #fcd6e5);
-    color: #1a1a1a;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 1.2rem;
-    border-radius: 16px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
-    transition: transform 0.3s ease, background-color 0.3s ease;
-    border: 1px solid #e0e0e0;
-    margin: 1rem;
-  }
-  
-  .care-category-card:hover {
-    background-color: #dfefff;
-    transform: translateY(-6px);
-  }
-  
-  .category-links {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 2rem;
-    padding: 2rem;
-  }
-  
-  .care-products-links h2{
-    display: flex;
-    justify-self: center;
-  }
-  /* Grid layout for filtered products */
-  .products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 1.5rem;
-    padding: 2rem;
-  }
-  
-  .product-card {
-    background-color: #fff;
-    border-radius: 12px;
-    padding: 1rem;
-    text-align: center;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
-  
-  .product-card img {
-    width: 100%;
-    height: auto;
-    border-radius: 8px;
-  }
-  
-  .product-card p {
-    font-weight: 500;
-    margin: 0.5rem 0;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 240px;
+  height: 150px;
+  background: linear-gradient(135deg, #ffe3ec, #fcd6e5);
+  color: #1a1a1a;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: 1.2rem;
+  border-radius: 16px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  border: 1px solid #e0e0e0;
+  margin: 1rem;
+}
 
-  .care-page {
-    padding: 2rem;
-    background-color: #f9fafc;
-    font-family: 'Poppins', sans-serif;
-  }
-  
-  /* ✅ Banner section */
-  .banner {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    background-color: #e3f2fd;
-    padding: 2rem;
-    border-radius: 20px;
-    margin-bottom: 3rem;
-    align-items: center;
-  }
-  
-  .banner-content {
-    flex: 1 1 300px;
-    padding: 1rem;
-  }
-  
-  .banner-content h1 {
-    font-size: 2rem;
-    color: #1a237e;
-  }
-  
-  .banner-content p {
-    font-size: 1.1rem;
-    color: #333;
-  }
-  
-  .banner-image {
-    flex: 1 1 300px;
-    text-align: center;
-  }
-  
-  .banner-image img {
-    max-width: 100%;
-    height: auto;
-    border-radius: 16px;
-  }
-  
-  
+.care-category-card:hover {
+  background-color: #dfefff;
+  transform: translateY(-6px);
+}
+
+.category-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  padding: 2rem;
+}
+
+.care-products-links h2 {
+  display: flex;
+  justify-self: center;
+}
+/* Grid layout for filtered products */
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+  padding: 2rem;
+}
+
+.product-card {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 1rem;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.product-card img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.product-card p {
+  font-weight: 500;
+  margin: 0.5rem 0;
+}
+
+.care-page {
+  padding: 2rem;
+  background-color: #f9fafc;
+  font-family: "Poppins", sans-serif;
+}
+
+/* COMPACT BANNER */
+.banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #e3f2fd;
+  padding: 0.8rem 1rem;
+  border-radius: 14px;
+  margin: 1.5rem 0;
+  min-height: 80px;
+}
+
+/* Banner text */
+.banner-content {
+  flex: 1;
+  padding-right: 1rem;
+}
+
+.banner-content h1 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0 0 0.3rem 0;
+}
+
+.banner-content p {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Banner image container */
+.banner-image {
+  flex: 0 0 auto; /* stops stretching */
+  display: flex;
+  justify-content: right;
+  align-items: flex-end;
+}
+
+/* FORCE small image */
+.banner-image img {
+  width: 150px !important; /* overrides all other rules */
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.admin-button {
+  position: fixed;
+  top: 60px;
+  right: 60px;
+  background-color: #4a90e2;
+  color: #fff;
+  font-weight: bold;
+  padding: 0.7rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.admin-button:hover {
+  background-color: #357ab7;
+  transform: translateY(-2px);
+}

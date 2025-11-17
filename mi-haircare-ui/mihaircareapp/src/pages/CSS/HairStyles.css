@@ -4,7 +4,7 @@
 
 .hairstyles-header {
   position: relative;
-  text-align: center;   
+  text-align: center;
   padding: 1rem 0;
 }
 
@@ -17,11 +17,10 @@
 
 .hamburger {
   position: absolute;
-  right: 1rem;  
+  right: 1rem;
   top: 50%;
   transform: translateY(-50%);
 }
-
 
 /* Hamburger button */
 .hamburger {
@@ -83,10 +82,10 @@
 
 /* Hairstyles Grid */
 .hairstyles-grid {
-  display: flex;               
-  flex-wrap: wrap;             
-  gap: 1.5rem;                 
-  justify-content: center;     
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  justify-content: center;
   margin-top: 2rem;
 }
 
@@ -128,4 +127,25 @@
   max-width: 100%;
   height: auto;
   border-radius: 16px;
+}
+
+.admin-button {
+  position: fixed;
+  top: 60px;
+  right: 60px;
+  background-color: #4a90e2;
+  color: #fff;
+  font-weight: bold;
+  padding: 0.7rem 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+}
+
+.admin-button:hover {
+  background-color: #357ab7;
+  transform: translateY(-2px);
 }

@@ -1,43 +1,39 @@
 import React, { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import HairstyleCard from "../components/HairStyleCard/HairStyleCard";
-import apiClient from "../api/client"; // ✅ import centralized API client
+import apiClient from "../api/client";
 import "./CSS/HairStyles.css";
 import BannerImage from "../components/assets/images/curlybraids.webp";
 
-const categories = [
-  { name: "African Hair Styles", path: "/hairstyles/african" },
-  { name: "DreadLocs HairStyles", path: "/hairstyles/african/dreadlocks" },
-  { name: "European Hairstyles", path: "/hairstyles/european" },
-  { name: "Asian Hairstyles", path: "/hairstyles/asian" },
-  { name: "American Hairstyles", path: "/hairstyles/american" },
-  { name: "Haircutz", path: "/hairstyles/haircutz" },
-];
-
 const HairStyles = () => {
+  const navigate = useNavigate();
   const { category } = useParams();
   const [menuOpen, setMenuOpen] = useState(false);
   const [hairstyles, setHairstyles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const categories = [
+    { name: "African Hair Styles", path: "/hairstyles/african" },
+    { name: "DreadLocs HairStyles", path: "/hairstyles/african/dreadlocks" },
+    { name: "European Hairstyles", path: "/hairstyles/european" },
+    { name: "Asian Hairstyles", path: "/hairstyles/asian" },
+    { name: "American Hairstyles", path: "/hairstyles/american" },
+    { name: "Haircutz", path: "/hairstyles/haircutz" },
+  ];
+
   useEffect(() => {
     const fetchHairstyles = async () => {
       try {
-        // ✅ use apiClient instead of fetch
         const response = await apiClient.get("/HairStyles/all-HairStyles");
         const result = response.data;
 
-        console.log("✅ API Response:", result);
-
-        if (Array.isArray(result.data)) {
+        if (result.succeeded && Array.isArray(result.data)) {
           setHairstyles(result.data);
         } else {
-          console.error("Unexpected response format:", result);
           setHairstyles([]);
         }
       } catch (err) {
-        console.error("❌ Error fetching hairstyles:", err);
         setError("Failed to load hairstyles. Please try again later.");
       } finally {
         setLoading(false);
@@ -52,8 +48,7 @@ const HairStyles = () => {
       <div className="hairstyles-category-page">
         <h2>{category.toUpperCase()} Hairstyles</h2>
         <p>
-          Collections of <strong>{category}</strong> hairstyles will be
-          available soon.
+          Collections of <strong>{category}</strong> hairstyles will be available soon.
         </p>
       </div>
     );
@@ -64,7 +59,15 @@ const HairStyles = () => {
 
   return (
     <div className="hairstyles-container">
-      {/* ✅ Banner Section */}
+      {/* Admin Button */}
+      <button
+        className="admin-button"
+        onClick={() => navigate("/admin/haircare")}
+      >
+        Admin Dashboard
+      </button>
+
+      {/* Banner */}
       <section className="banner">
         <div className="banner-content">
           <h1>Welcome to Envogue Hairstyles</h1>
@@ -78,10 +81,9 @@ const HairStyles = () => {
         </div>
       </section>
 
-      {/* ✅ Header + Hamburger */}
+      {/* Header + Hamburger */}
       <div className="hairstyles-header">
         <h2 className="hairstyles-title">Envogue Hairstyles</h2>
-
         <button
           className="hamburger"
           onClick={() => setMenuOpen(!menuOpen)}
@@ -89,7 +91,6 @@ const HairStyles = () => {
         >
           ☰
         </button>
-
         {menuOpen && (
           <div className="dropdown-menu">
             {categories.map((cat, index) => (
@@ -106,16 +107,10 @@ const HairStyles = () => {
         )}
       </div>
 
-      {/* ✅ Hairstyles Grid */}
+      {/* Hairstyles Grid */}
       <div className="hairstyles-grid">
         {hairstyles.map((style) => (
-          <HairstyleCard
-            key={style.id}
-            image={style.photos?.[0]?.url || "/placeholder.jpg"}
-            name={style.styleName}
-            description={style.description}
-            price={style.priceTag}
-          />
+          <HairstyleCard key={style.hairStyleId} style={style} />
         ))}
       </div>
     </div>

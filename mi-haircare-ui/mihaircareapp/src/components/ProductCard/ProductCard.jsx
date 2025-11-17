@@ -1,4 +1,3 @@
-// src/components/ProductCard/ProductCard.jsx
 import React, { useContext } from "react";
 import CartContext from "../../Context/CartContext";
 import "./ProductCard.css";
@@ -7,16 +6,31 @@ const ProductCard = ({ product }) => {
   const { addToCart } = useContext(CartContext);
 
   // normalize input from API (support both camelCase and PascalCase)
-  const getField = (obj, ...names) => names.reduce((v, n) => v ?? obj?.[n], undefined);
+  const getField = (obj, ...names) =>
+    names.reduce((v, n) => v ?? obj?.[n], undefined);
 
   const normalized = {
-    id: getField(product, "id", "Id", "haircareProductId", "HaircareProductId", "productId"),
+    id: getField(
+      product,
+      "id",
+      "Id",
+      "haircareProductId",
+      "HaircareProductId",
+      "productId"
+    ),
     productName: getField(product, "productName", "ProductName", "name"),
     brandName: getField(product, "brandName", "BrandName", "brand"),
     price: getField(product, "price", "Price"),
-    imageUrl: getField(product, "imageUrl", "ImageUrl", "photoUrl", "PhotoUrl", "image"),
+    imageUrl: getField(
+      product,
+      "imageUrl",
+      "ImageUrl",
+      "photoUrl",
+      "PhotoUrl",
+      "image"
+    ),
     stockQuantity: getField(product, "stockQuantity", "StockQuantity"),
-  };  
+  };
   console.log("Normalized product:", normalized);
 
   const handleAddToCart = () => {
@@ -30,19 +44,25 @@ const ProductCard = ({ product }) => {
       Id: normalized.id,
       ProductName: normalized.productName,
       Price: normalized.price,
-      ImageUrl: normalized.imageUrl ?? normalized.PhotoUrl ?? "/placeholder.png",
+      ImageUrl:
+        normalized.imageUrl ?? normalized.PhotoUrl ?? "/placeholder.png",
       StockQuantity: normalized.stockQuantity,
     });
-    
   };
 
   return (
     <div className="product-card">
-      <img src={normalized.imageUrl || "/placeholder.png"} alt={normalized.productName} />
+      <img
+        src={normalized.imageUrl || "/placeholder.png"}
+        alt={normalized.productName}
+      />
       <h3>{normalized.productName}</h3>
       <p>Brand: {normalized.brandName}</p>
       <p>Price: ₦{normalized.price ?? "N/A"}</p>
-      <button onClick={handleAddToCart} disabled={!normalized.id || (normalized.stockQuantity === 0)}>
+      <button
+        onClick={handleAddToCart}
+        disabled={!normalized.id || normalized.stockQuantity === 0}
+      >
         Add to Cart 🛒
       </button>
     </div>

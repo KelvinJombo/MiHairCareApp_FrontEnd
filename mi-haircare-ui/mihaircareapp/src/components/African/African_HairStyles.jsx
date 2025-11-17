@@ -1,40 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import client from "../../api/client";
-import "./African_HairStyles.css";
-import BannerImage from "../assets/images/sampleAfrik.jpeg";
+import HairstyleGrid from "../HairStyleGrid/HairStyleGrid";
+import apiClient from "../../api/client";
+import "../African/African_HairStyles.css";
+import BannerImage from "../assets/images/woman-3153999_1280.jpg";
+
 
 export default function AfricanHairstyles() {
-  const [hairstyles, setHairstyles] = useState([]);
+  const [styles, setStyles] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState("");
 
-  // Fetch African hairstyles
   useEffect(() => {
-    const fetchAfricanHairstyles = async () => {
+    const fetchAfrican = async () => {
       try {
-        const response = await client.get("/HairStyles/all-African");
-        const result = await response.data();
+        const response = await apiClient.get("/HairStyles/all-African");
+        const result = response.data;
 
-        // Ensure the data is an array
-        if (result && result.succeeded && Array.isArray(result.data)) {
-          setHairstyles(result.data);
+        if (result.succeeded && Array.isArray(result.data)) {
+          setStyles(result.data);
         } else {
-          setError("Unexpected response format from server.");
+          setError("Unexpected response from server.");
         }
       } catch (err) {
-        console.error("Error fetching hairstyles:", err);
-        setError("Failed to load hairstyles. Please try again later.");
+        setError("Failed to load hairstyles.");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchAfricanHairstyles();
+    fetchAfrican();
   }, []);
 
   return (
     <div className="african-page">
+
       {/* Banner */}
       <section className="banner">
         <div className="banner-content">
@@ -49,7 +49,7 @@ export default function AfricanHairstyles() {
         </div>
       </section>
 
-      {/* Categories */}
+      {/* Category Links (PRESERVED!) */}
       <section className="section">
         <h2>Categories</h2>
         <div className="category-grid">
@@ -57,10 +57,12 @@ export default function AfricanHairstyles() {
             <h3>Braids</h3>
             <p>Explore African braid styles</p>
           </Link>
+
           <Link to="/hairstyles/african/weaves" className="category-card">
             <h3>Weaves</h3>
             <p>Discover African weave styles</p>
           </Link>
+
           <Link to="/hairstyles/african/dreadlocks" className="category-card">
             <h3>Dreadlocks</h3>
             <p>See African dreadlock styles</p>
@@ -68,31 +70,15 @@ export default function AfricanHairstyles() {
         </div>
       </section>
 
-      {/* Hairstyles Section */}
+      {/* Hairstyles */}
       <section className="section">
         <h2>Available African Hairstyles</h2>
 
-        {loading ? (
-          <p>Loading hairstyles...</p>
-        ) : error ? (
-          <p className="error-text">{error}</p>
-        ) : hairstyles.length > 0 ? (
-          <div className="hairstyles-grid">
-            {hairstyles.map((style, index) => (
-              <div key={index} className="hairstyle-card">
-                <h3>{style.styleName}</h3>
-                <p>{style.description}</p>
-                <p>
-                  <strong>₦{style.priceTag.toLocaleString()}</strong>
-                </p>
-                {style.promotionalOffer && <span className="offer-badge">Promo!</span>}
-              </div>
-            ))}
-          </div>
-        ) : (
-          <p>No African hairstyles available right now.</p>
-        )}
+        {loading && <p>Loading hairstyles...</p>}
+        {error && <p className="error-text">{error}</p>}
+        {!loading && !error && <HairstyleGrid items={styles} />}
       </section>
+
     </div>
   );
 }

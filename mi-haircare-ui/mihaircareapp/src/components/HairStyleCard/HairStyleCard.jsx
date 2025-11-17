@@ -1,13 +1,20 @@
 import React from "react";
-import "../../../src/pages/CSS/StylesCategory.css";
+import "../../pages/CSS/StylesCategory.css";
 
-export default function HairstyleCard({ name, price, image }) {
+export default function HairstyleCard({ style }) {
+  const image = style.photos?.[0]?.url || "/placeholder.jpg";
+
   return (
     <div className="hairstyle-card">
-      <img src={image} alt={name} className="hairstyle-image" />
+      <img src={image} alt={style.styleName} className="hairstyle-image" />
+
       <div className="hairstyle-info">
-        <h3>{name}</h3>
-        {price && <p className="price">{price}</p>}
+        <h3>{style.styleName}</h3>
+        <p className="price">₦{style.priceTag?.toLocaleString()}</p>
+
+        {style.promotionalOffer && (
+          <span className="promo-badge">Promo Offer</span>
+        )}
       </div>
     </div>
   );

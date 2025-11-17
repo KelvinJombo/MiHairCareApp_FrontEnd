@@ -2,20 +2,26 @@ import React, { useContext } from "react";
 import { Link, useParams } from "react-router-dom";
 import StylistProductsContext from "../Context/StylistProductsContext";
 import "./CSS/CareProducts.css";
-import BannerImage from "../components/assets/images/care_products/HairCareSign.jpg"; 
+import BannerImage from "../components/assets/images/care_products/HairCareSign.jpg";
+import { useNavigate } from "react-router-dom";
 
 const CareProducts = () => {
+  const navigate = useNavigate();
   const { collections_data } = useContext(StylistProductsContext);
   const { category } = useParams();
 
-  // If category is provided, show filtered products
   if (category) {
-    const filtered = collections_data.filter(
-      (item) => item.category === category
-    );
+    const filtered = collections_data.filter((item) => item.category === category);
     return (
       <div className="care-page">
-        {/* ✅ Banner */}
+        <button
+          className="admin-button"
+          onClick={() => navigate("/admin/haircare")}
+        >
+          Admin Dashboard
+        </button>
+
+        {/* Banner */}
         <section className="banner">
           <div className="banner-content">
             <h1>Explore Our Hair Care Products</h1>
@@ -40,10 +46,16 @@ const CareProducts = () => {
     );
   }
 
-  // Else, show category links
   return (
     <div className="care-page">
-      {/* ✅ Banner */}
+      <button
+        className="admin-button"
+        onClick={() => navigate("/admin/haircare")}
+      >
+        Admin Dashboard
+      </button>
+
+      {/* Banner */}
       <section className="banner">
         <div className="banner-content">
           <h1>Discover Our Hair Care Range</h1>
