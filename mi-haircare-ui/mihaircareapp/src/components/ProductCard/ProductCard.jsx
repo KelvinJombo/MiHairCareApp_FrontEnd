@@ -14,9 +14,10 @@ const ProductCard = ({ product }) => {
     productName: getField(product, "productName", "ProductName", "name"),
     brandName: getField(product, "brandName", "BrandName", "brand"),
     price: getField(product, "price", "Price"),
-    imageUrl: getField(product, "imageUrl", "ImageUrl", "image"),
+    imageUrl: getField(product, "imageUrl", "ImageUrl", "photoUrl", "PhotoUrl", "image"),
     stockQuantity: getField(product, "stockQuantity", "StockQuantity"),
-  };
+  };  
+  console.log("Normalized product:", normalized);
 
   const handleAddToCart = () => {
     if (!normalized.id) {
@@ -29,9 +30,10 @@ const ProductCard = ({ product }) => {
       Id: normalized.id,
       ProductName: normalized.productName,
       Price: normalized.price,
-      ImageUrl: normalized.imageUrl,
+      ImageUrl: normalized.imageUrl ?? normalized.PhotoUrl ?? "/placeholder.png",
       StockQuantity: normalized.stockQuantity,
     });
+    
   };
 
   return (

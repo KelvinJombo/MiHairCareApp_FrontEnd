@@ -1,13 +1,14 @@
-const stripe = await loadStripe("pk_test_XXXXXXX");
+const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
-const response = await fetch("/api/payment/create-intent", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    amount: 5000,
-    currency: "GBP",
-    customerEmail: "kelvin@example.com"
-  })
+const response = await apiClient.post("/api/payment/create-intent", {
+  amount: totalAmount,
+  currency: "GBP",
+  customer: {
+    name: form.userName,
+    email: form.email,
+    phone: form.phone,
+    address: form.address,
+  }
 });
 const data = await response.json();
 const clientSecret = data.clientSecret;

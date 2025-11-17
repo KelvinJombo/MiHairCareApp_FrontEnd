@@ -1,13 +1,19 @@
 // src/pages/Checkout.jsx
 import { loadStripe } from "@stripe/stripe-js";
-import { Elements, CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
+import {
+  Elements,
+  CardElement,
+  useStripe,
+  useElements,
+} from "@stripe/react-stripe-js";
 import React, { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import CartContext from "../Context/CartContext";
 import apiClient from "../api/client";
 import "./CSS/Checkout.css";
 
-const stripePromise = loadStripe("pk_test_51PaarAJYC15LLJQsywJu7aMTftQfnIQ6oy5mbPIW2sSNeQcI8zZrxeJApcvhPHhzMp6hJv8dk9hxYS1ph2I2IyMi00j8rwaOA1");
+// CRA environment variable (yarn CRA), set in .env: REACT_APP_STRIPE_PUBLIC_KEY
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
 const CheckoutForm = () => {
   const { cart, loading, checkoutCart } = useContext(CartContext);
@@ -25,7 +31,8 @@ const CheckoutForm = () => {
 
   const [processing, setProcessing] = useState(false);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,28 +45,41 @@ const CheckoutForm = () => {
     setProcessing(true);
 
     try {
-      // 🧮 Calculate total amount
-      const totalAmount =
-        cart.totalAmount ||
-        cart.items.reduce((sum, item) => sum + item.totalPrice, 0);
+      // Calculate total amount in *major units* (your cart likely uses major currency units)
+      const totalMajor =
+        cart.totalAmount ??
+        cart.items.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
 
-      // 📨 Create PaymentIntent using your apiClient
+      // Convert to minor units (pence) — Stripe expects integer in minor units
+      const amountInMinorUnits = Math.round(totalMajor * 100);
+
+      // Create PaymentIntent on backend (backend should return clientSecret and paymentIntentId)
       const response = await apiClient.post("/payment/create-intent", {
-        amount: totalAmount,
-        currency: "GBP",
-        customerEmail: form.email,
+        amount: amountInMinorUnits, // integer (pence)
+        currency: "gbp",
+        customer: {
+          name: form.fullName,
+          email: form.email,
+          phone: form.phone,
+          address: form.address,
+        },
       });
 
-      const { clientSecret } = response.data;
-      if (!clientSecret) throw new Error("Client secret not returned from backend");
+      const { clientSecret, paymentIntentId } = response.data || {};
+      if (!clientSecret || !paymentIntentId)
+        throw new Error(
+          "Client secret or paymentIntentId not returned from backend"
+        );
 
-      // 💳 Confirm payment on client
+      // Confirm payment on client
       const result = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: elements.getElement(CardElement),
           billing_details: {
             name: form.fullName,
             email: form.email,
+            phone: form.phone,
+            address: { line1: form.address },
           },
         },
       });
@@ -69,21 +89,29 @@ const CheckoutForm = () => {
         alert(result.error.message);
       } else if (result.paymentIntent?.status === "succeeded") {
         console.log("✅ Payment successful!");
-        alert("Payment successful!");
 
-        // Proceed to backend checkout logic
+        // Notify backend to finalize checkout (pass paymentIntentId so backend can verify or link)
         await checkoutCart({
-          ...form,
+          paymentIntentId,
+          customer: { ...form },
           cartItems: cart.items,
+          amount: amountInMinorUnits,
         });
 
         navigate("/thank-you", {
-          state: { name: form.fullName, total: totalAmount },
+          state: { name: form.fullName, total: totalMajor },
         });
+      } else {
+        console.warn("Unhandled payment state:", result.paymentIntent);
+        alert("Payment not completed. Please check and try again.");
       }
     } catch (error) {
       console.error("❌ Checkout failed:", error);
-      alert(error.response?.data?.message || "Something went wrong. Please try again.");
+      alert(
+        error?.response?.data?.message ||
+          error.message ||
+          "Something went wrong. Please try again."
+      );
     } finally {
       setProcessing(false);
     }

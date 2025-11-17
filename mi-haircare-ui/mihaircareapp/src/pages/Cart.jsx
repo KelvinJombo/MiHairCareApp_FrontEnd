@@ -27,7 +27,7 @@ const Cart = () => {
         <div className="cart-container">
           {cart.items.map((item) => (
             <div className="cart-item" key={item.productId || item.Id || item.HaircareProductId}>
-              <img src={item.imageUrl || item.ImageUrl || "/placeholder.png"} alt={item.productName || item.ProductName} />
+              <img src={item.ImageUrl || "/placeholder.png"} alt={item.ProductName} />
               <div className="cart-details">
                 <h3>{item.productName || item.ProductName}</h3>
                 <p>Price: ₦{item.unitPrice}</p>
