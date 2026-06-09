@@ -1,4 +1,3 @@
-// src/pages/Checkout.jsx
 import { loadStripe } from "@stripe/stripe-js";
 import {
   Elements,
@@ -11,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import CartContext from "../Context/CartContext";
 import apiClient from "../api/client";
 import "./CSS/Checkout.css";
+import { useAuth } from "../Context/AuthContext";
 
 // CRA environment variable (yarn CRA), set in .env: REACT_APP_STRIPE_PUBLIC_KEY
 const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
@@ -20,11 +20,16 @@ const CheckoutForm = () => {
   const navigate = useNavigate();
   const stripe = useStripe();
   const elements = useElements();
+  const { user } = useAuth();
 
   const [form, setForm] = useState({
     fullName: "",
     email: "",
     address: "",
+    city: "",
+    state: "",
+    country: "",
+    postalCode: "",
     phone: "",
     paymentMethod: "card",
   });
@@ -53,10 +58,17 @@ const CheckoutForm = () => {
       // Convert to minor units (pence) — Stripe expects integer in minor units
       const amountInMinorUnits = Math.round(totalMajor * 100);
 
-      // Create PaymentIntent on backend (backend should return clientSecret and paymentIntentId)
+      if (!user?.userId) {
+        alert("User not logged in. Please login again.");
+        return;
+      }
+
+      console.log("AUTH USER:", user);
+
       const response = await apiClient.post("/payment/create-intent", {
-        amount: amountInMinorUnits, // integer (pence)
-        currency: "gbp",
+        amount: amountInMinorUnits,
+        currency: "NGN",
+
         customer: {
           name: form.fullName,
           email: form.email,
@@ -65,7 +77,14 @@ const CheckoutForm = () => {
         },
       });
 
-      const { clientSecret, paymentIntentId } = response.data || {};
+      const data = response.data;
+
+      if (!data.succeeded) {
+        throw new Error(data.message);
+      }
+
+      const clientSecret = data.data.clientSecret;
+      const paymentIntentId = data.data.paymentIntentId;
       if (!clientSecret || !paymentIntentId)
         throw new Error(
           "Client secret or paymentIntentId not returned from backend"
@@ -93,11 +112,12 @@ const CheckoutForm = () => {
         // Notify backend to finalize checkout (pass paymentIntentId so backend can verify or link)
         await checkoutCart({
           paymentIntentId,
-          customer: { ...form },
-          cartItems: cart.items,
-          amount: amountInMinorUnits,
+          shippingAddress: form.address,
+          city: form.city,
+          state: form.state,
+          country: form.country,
+          postalCode: form.postalCode,
         });
-
         navigate("/thank-you", {
           state: { name: form.fullName, total: totalMajor },
         });
@@ -161,6 +181,50 @@ const CheckoutForm = () => {
           type="tel"
           name="phone"
           value={form.phone}
+          onChange={handleChange}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label>City</label>
+        <input
+          type="text"
+          name="city"
+          value={form.city}
+          onChange={handleChange}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label>State</label>
+        <input
+          type="text"
+          name="state"
+          value={form.state}
+          onChange={handleChange}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Country</label>
+        <input
+          type="text"
+          name="country"
+          value={form.country}
+          onChange={handleChange}
+          required
+        />
+      </div>
+
+      <div className="form-group">
+        <label>Postal Code</label>
+        <input
+          type="text"
+          name="postalCode"
+          value={form.postalCode}
           onChange={handleChange}
           required
         />

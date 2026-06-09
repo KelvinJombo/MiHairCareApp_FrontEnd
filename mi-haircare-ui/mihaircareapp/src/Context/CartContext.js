@@ -103,15 +103,22 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  const checkoutCart = async () => {
+  const checkoutCart = async (checkoutData) => {
     const userId = getUserId();
+  
     if (!userId) {
       alert("Please log in to checkout.");
       return;
     }
+  
     try {
-      const response = await apiClient.post(`/Cart/checkout?userId=${userId}`);
-      alert(response.data?.message || "Checkout successful!");
+      const response = await apiClient.post(
+        "/Cart/checkout",
+        checkoutData
+      );
+  
+      alert(response.data?.message || "Checkout successful");
+  
       setCart({ items: [] });
     } catch (err) {
       console.error("❌ Checkout error:", err);

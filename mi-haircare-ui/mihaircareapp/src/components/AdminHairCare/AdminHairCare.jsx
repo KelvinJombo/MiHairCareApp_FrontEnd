@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import apiClient from "../../api/client";
 import "./AdminHairCare.css";
+import { useNavigate } from "react-router-dom";
 
 export default function AdminHairCare() {
   const [formData, setFormData] = useState({
@@ -12,6 +13,7 @@ export default function AdminHairCare() {
     price: "",
     origin: "",
     brand: "",
+    category: "",
     stockQuantity: "",
     image: null,
     currentImageUrl: null,
@@ -24,8 +26,16 @@ export default function AdminHairCare() {
   const [searchType, setSearchType] = useState("hairStyle");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const hairStyleOrigins = ["African", "American", "European", "Asian"];
+  const productCategories = [
+    "Growth",
+    "Treatment",
+    "Styling",
+    "Gadgets",
+    "Extensions",
+  ];
 
   const handleChange = (e) => {
     const { name, value, type, checked, files } = e.target;
@@ -97,6 +107,7 @@ export default function AdminHairCare() {
       else {
         form.append("ProductName", formData.name);
         form.append("Brand", formData.brand);
+        form.append("Category", formData.category);
         form.append("Description", formData.description);
         form.append("Price", formData.price);
         form.append("StockQuantity", formData.stockQuantity);
@@ -150,12 +161,13 @@ export default function AdminHairCare() {
 
         setFormData({
           type: searchType,
-          id: "", // <-- DO NOT EXPOSE ID IN UI ANYMORE
+          id: "",
           name: item.styleName || item.productName,
           description: item.description,
           price: item.priceTag || item.price,
           origin: item.origin || "",
           brand: item.brand || "",
+          category: item.category || "",
           stockQuantity: item.stockQuantity || "",
           image: null,
           currentImageUrl: item.imageUrl || null,
@@ -202,6 +214,7 @@ export default function AdminHairCare() {
       price: "",
       origin: "",
       brand: "",
+      category: "",
       stockQuantity: "",
       image: null,
       currentImageUrl: null,
@@ -214,8 +227,17 @@ export default function AdminHairCare() {
 
   return (
     <div className="admin-page">
-      <h1>HairCare Admin Dashboard</h1>
+      <div className="admin-header">
+        <h1>HairCare Admin Dashboard</h1>
 
+        <button
+          type="button"
+          className="add-portfolio-styles"
+          onClick={() => navigate("/stylist-hairstyles")}
+        >
+          Add Styles To Your Portfolio
+        </button>
+      </div>
       <div className="fetch-section">
         <h2>Fetch Item to Edit/Delete</h2>
         <select
@@ -289,6 +311,22 @@ export default function AdminHairCare() {
           required
         />
 
+        {formData.type === "product" && (
+          <select
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            required
+          >
+            <option value="">Select Category</option>
+            {productCategories.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
+        )}
+
         {formData.type === "hairStyle" && (
           <select
             name="origin"
@@ -322,17 +360,28 @@ export default function AdminHairCare() {
           </div>
         )}
 
-        <label className="flex items-center space-x-2">
-          <input
-            type="checkbox"
-            name="isMainPhoto"
-            checked={formData.isMainPhoto}
-            onChange={handleChange}
-          />
-          <span>Is Main Photo</span>
-        </label>
+        <div className="image-section">
+          <label className="image-label">Image</label>
 
-        <input type="file" name="image" onChange={handleChange} />
+          <div className="image-input-row">
+            <input
+              type="file"
+              name="image"
+              onChange={handleChange}
+              className="image-upload"
+            />
+
+            <label className="is-main-photo">
+              <input
+                type="checkbox"
+                name="isMainPhoto"
+                checked={formData.isMainPhoto}
+                onChange={handleChange}
+              />
+              <span>Is Main Photo</span>
+            </label>
+          </div>
+        </div>
 
         <div className="form-buttons">
           <button type="submit">{editing ? "Update" : "Create"}</button>

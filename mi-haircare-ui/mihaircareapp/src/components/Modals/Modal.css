@@ -1,0 +1,117 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5000;
+}
+
+.modal-box {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  width: 350px;
+  text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.modal-box.large {
+  width: 70%;
+  max-height: 85%;
+  overflow-y: auto;
+}
+
+.modal-btn {
+  display: block;
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: none;
+  background: black;
+  color: white;
+  border-radius: 10px;
+  font-size: 18px;
+}
+
+.modal-close {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background: red;
+  color: white;
+  border: none;
+  border-radius: 8px;
+}
+
+.details-images {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.detail-img {
+  width: 40%;
+  border-radius: 12px;
+}
+
+.stylists-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 20px;
+}
+
+.stylist-card {
+  background: #fff;
+  padding: 15px;
+  border-radius: 12px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.stylist-img {
+  width: 100%;
+  border-radius: 10px;
+}
+
+.hairstyle-photos {
+  display: flex;
+  gap: 1rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+}
+
+.hairstyle-photo {
+  width: 220px;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 14px;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  transition: transform 0.25s ease;
+}
+
+.hairstyle-photo:hover {
+  transform: scale(1.04);
+}
+
+.hairstyle-info {
+  text-align: left;
+  margin-top: 1rem;
+  line-height: 1.7;
+}
+
+.details-error {
+  padding: 1rem;
+  border-radius: 10px;
+  background: #fff3f3;
+  color: #c0392b;
+  text-align: center;
+  font-weight: 500;
+  border: 1px solid #f5b7b1;
+}
