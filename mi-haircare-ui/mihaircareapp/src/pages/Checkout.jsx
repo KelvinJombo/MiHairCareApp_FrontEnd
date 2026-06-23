@@ -45,30 +45,50 @@ const CheckoutForm = () => {
       alert("Your cart is empty!");
       return;
     }
-    if (!stripe || !elements) return;
+
+    if (!user?.userId) {
+      alert("User not logged in. Please login again.");
+      navigate("/login");
+      return;
+    }
 
     setProcessing(true);
 
     try {
-      // Calculate total amount in *major units* (your cart likely uses major currency units)
       const totalMajor =
         cart.totalAmount ??
         cart.items.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
 
-      // Convert to minor units (pence) — Stripe expects integer in minor units
-      const amountInMinorUnits = Math.round(totalMajor * 100);
+      if (form.paymentMethod === "delivery") {
+        const checkoutResult = await checkoutCart({
+          paymentIntentId: null,
+          paymentMethod: "delivery",
+          shippingAddress: form.address,
+          city: form.city,
+          state: form.state,
+          country: form.country,
+          postalCode: form.postalCode,
+        });
 
-      if (!user?.userId) {
-        alert("User not logged in. Please login again.");
+        if (checkoutResult) {
+          navigate("/thank-you", {
+            state: { name: form.fullName, total: totalMajor },
+          });
+        }
         return;
       }
 
-      console.log("AUTH USER:", user);
+      if (!stripe || !elements) {
+        alert("Payment system is not ready yet. Please try again.");
+        return;
+      }
+
+      // Convert to minor units for Stripe
+      const amountInMinorUnits = Math.round(totalMajor * 100);
 
       const response = await apiClient.post("/payment/create-intent", {
         amount: amountInMinorUnits,
         currency: "NGN",
-
         customer: {
           name: form.fullName,
           email: form.email,
@@ -79,21 +99,26 @@ const CheckoutForm = () => {
 
       const data = response.data;
 
-      if (!data.succeeded) {
-        throw new Error(data.message);
+      if (!data?.succeeded) {
+        throw new Error(data?.message || "Unable to initialize payment.");
       }
 
-      const clientSecret = data.data.clientSecret;
-      const paymentIntentId = data.data.paymentIntentId;
-      if (!clientSecret || !paymentIntentId)
+      const clientSecret = data?.data?.clientSecret;
+      const paymentIntentId = data?.data?.paymentIntentId;
+      if (!clientSecret || !paymentIntentId) {
         throw new Error(
           "Client secret or paymentIntentId not returned from backend"
         );
+      }
 
-      // Confirm payment on client
+      const cardElement = elements.getElement(CardElement);
+      if (!cardElement) {
+        throw new Error("Card details are not ready yet. Please try again.");
+      }
+
       const result = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
-          card: elements.getElement(CardElement),
+          card: cardElement,
           billing_details: {
             name: form.fullName,
             email: form.email,
@@ -109,18 +134,21 @@ const CheckoutForm = () => {
       } else if (result.paymentIntent?.status === "succeeded") {
         console.log("✅ Payment successful!");
 
-        // Notify backend to finalize checkout (pass paymentIntentId so backend can verify or link)
-        await checkoutCart({
+        const checkoutResult = await checkoutCart({
           paymentIntentId,
+          paymentMethod: "card",
           shippingAddress: form.address,
           city: form.city,
           state: form.state,
           country: form.country,
           postalCode: form.postalCode,
         });
-        navigate("/thank-you", {
-          state: { name: form.fullName, total: totalMajor },
-        });
+
+        if (checkoutResult) {
+          navigate("/thank-you", {
+            state: { name: form.fullName, total: totalMajor },
+          });
+        }
       } else {
         console.warn("Unhandled payment state:", result.paymentIntent);
         alert("Payment not completed. Please check and try again.");

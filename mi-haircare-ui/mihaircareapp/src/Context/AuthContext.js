@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useRef,
+} from "react";
 import axios from "axios";
 
 const AuthContext = createContext();
@@ -74,7 +80,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axios.post(
         `${apiBaseUrl}/Authentication/login-with-google`,
-        { idToken }
+        { idToken },
       );
 
       const data = response.data?.data;
@@ -114,7 +120,7 @@ export const AuthProvider = ({ children }) => {
         {},
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
 
       localStorage.removeItem("token");
@@ -131,6 +137,70 @@ export const AuthProvider = ({ children }) => {
       return { success: false, message: "Unable to logout" };
     }
   };
+
+  // Inactivity logout (5 minutes)
+  const inactivityTimerRef = useRef(null);
+
+  useEffect(() => {
+    const clearInactivityTimer = () => {
+      if (inactivityTimerRef.current) {
+        clearTimeout(inactivityTimerRef.current);
+        inactivityTimerRef.current = null;
+      }
+    };
+
+    const startInactivityTimer = () => {
+      clearInactivityTimer();
+      // use literal 300000ms to avoid extra dependencies
+      inactivityTimerRef.current = setTimeout(async () => {
+        console.info("User inactive for 5 minutes — logging out");
+        const logoutUrl =
+          user?.role === "stylist"
+            ? `${apiBaseUrl}/Stylists/logout`
+            : `${apiBaseUrl}/Authentication/logout`;
+
+        try {
+          await axios.post(
+            logoutUrl,
+            {},
+            { headers: { Authorization: `Bearer ${token}` } },
+          );
+        } catch (err) {
+          // ignore network errors on inactivity logout
+        }
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("userId");
+        localStorage.removeItem("email");
+        localStorage.removeItem("role");
+        setToken(null);
+        setUser(null);
+      }, 300000);
+    };
+
+    const activityEvents = [
+      "mousemove",
+      "mousedown",
+      "keydown",
+      "touchstart",
+      "scroll",
+    ];
+
+    const handleActivity = () => {
+      if (token) startInactivityTimer();
+    };
+
+    activityEvents.forEach((ev) => window.addEventListener(ev, handleActivity));
+
+    if (token) startInactivityTimer();
+
+    return () => {
+      activityEvents.forEach((ev) =>
+        window.removeEventListener(ev, handleActivity),
+      );
+      clearInactivityTimer();
+    };
+  }, [token, user, apiBaseUrl]);
 
   return (
     <AuthContext.Provider

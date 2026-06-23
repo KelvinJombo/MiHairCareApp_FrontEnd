@@ -9,6 +9,7 @@ import {
   useElements,
 } from "@stripe/react-stripe-js";
 import apiClient from "../../api/client";
+import getServerMessage from "../../utils/getServerMessage";
 import BannerImage from "../assets/images/woman_booking.avif";
 import "./BookingPage.css";
 import { useNavigate } from "react-router-dom";
@@ -129,9 +130,7 @@ const CheckoutForm = ({ bookingDetails, goBack, onSuccess }) => {
         console.error("STATUS:", error.response.status);
       }
 
-      setMessage(
-        error?.response?.data?.message || error.message || "Payment failed."
-      );
+      setMessage(getServerMessage(error) || error.message || "Payment failed.");
     }
 
     setLoading(false);

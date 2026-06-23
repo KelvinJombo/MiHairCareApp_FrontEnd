@@ -35,8 +35,7 @@ export const Footer = () => {
             </div>
         </div>
         <div className="footer-copyright">
-            <hr />
-            <p>Copyright @ 2025. All Rights Reserved</p>
+            <hr />            
             <p>Designed by Jombo.Net Web Engineers</p>
         </div>
     </div>

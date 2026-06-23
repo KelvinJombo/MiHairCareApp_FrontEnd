@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import apiClient from "../../api/client";
+import getServerMessage from "../../utils/getServerMessage";
 
 export default function StylistHairStyleSelection() {
   const [hairStyles, setHairStyles] = useState([]);
@@ -31,7 +32,7 @@ export default function StylistHairStyleSelection() {
 
   const toggleSelection = (id) => {
     setSelectedStyles((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
     );
   };
 
@@ -50,10 +51,10 @@ export default function StylistHairStyleSelection() {
         hairStyleIds: selectedStyles,
       });
 
-      setMessage(res.data); // "Portfolio updated successfully."
+      setMessage(getServerMessage(res) || "Portfolio updated successfully.");
     } catch (err) {
       console.error("SAVE ERROR:", err);
-      setError(err.response?.data || "Failed to update portfolio.");
+      setError(getServerMessage(err) || "Failed to update portfolio.");
     } finally {
       setSaving(false);
     }
